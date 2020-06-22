@@ -149,8 +149,9 @@ class HashingSubscriber implements EventSubscriber
                 continue;
             }
 
-            if (key_exists($refProperty->getName(), $entityChangeSet)
-                && $entityChangeSet[$refProperty->getName()][0] === null
+            if ((key_exists($refProperty->getName(), $entityChangeSet)
+                && $entityChangeSet[$refProperty->getName()][0] === null)
+                || in_array($refProperty->getName(), $entity->getReHashFields())
             ) {
                 $value = $this->addSalt($value, $annotationOptions, $entity);
                 $refProperty->setValue($entity, $this->getHashor()->hash($value));
@@ -213,8 +214,9 @@ class HashingSubscriber implements EventSubscriber
             if ( ! empty($annotationOptions)) {
                 $refProperty->setAccessible(true);
 
-                if (key_exists($refProperty->getName(), $entityChangeSet)
-                    && $entityChangeSet[$refProperty->getName()][0] === null
+                if ((key_exists($refProperty->getName(), $entityChangeSet)
+                    && $entityChangeSet[$refProperty->getName()][0] === null)
+                    || in_array($refProperty->getName(), $entity->getReHashFields())
                 ) {
                     $hashableFields[] = [
                         'reflection' => $refProperty,
